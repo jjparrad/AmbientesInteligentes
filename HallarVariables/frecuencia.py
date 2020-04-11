@@ -97,28 +97,27 @@ fileName = wav_file_name[:-4]
 print ('creando archivo en excel...')
 workbook = xlsxwriter.Workbook(fileName+'.xlsx') # NOMBRE DEL ARCHIVO
 worksheet = workbook.add_worksheet(fileName) #NOMBRE DEL ARCHIVO
-cont = 0
+
 row = 0
 col = 0
 worksheet.write(row, col, 'Freq');
 worksheet.write(row, col+1, 'Amplitud');
 worksheet.write(row, col+2, 'Tiempo');
 worksheet.write(row, col+3, 'Valence');
+worksheet.write(row, col+4, 'Subject');
 
 row = 1
 for x_var in (frq):
-    worksheet.write(row, col,     cont) # CONTADOR POR CADA REPETICION COL 0 ( ¿TIEMPO? )
-    worksheet.write(row, col + 1, x_var) # VARIABLE A COPIAR ( FRECUENCIA EN ESTE CASO ) COL 1
+    worksheet.write(row, col, x_var) # VARIABLE A COPIAR ( FRECUENCIA EN ESTE CASO ) COL 1
     row += 1
-    cont += 1
 
-col = 2
+col = 1
 row = 1
 for amplitud in (y):
     worksheet.write(row, col, amplitud) #COPIAMOS LA AMPLITUD ( INTENSIDAD) EN LA COL 2
     row += 1
 
-col = 3
+col = 2
 row = 1
 Fs, x = wavfile.read(wave_file_path)
 worksheet.write(row, col, len(x)/Fs)
