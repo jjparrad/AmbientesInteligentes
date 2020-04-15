@@ -6,6 +6,7 @@ import xlsxwriter
 from io import BytesIO
 import os
 import sys
+import wave
 
 
 def frequency_sepectrum(x, sf):
@@ -107,9 +108,11 @@ worksheet.write(row, col+3, 'Valence');
 worksheet.write(row, col+4, 'Subject');
 
 row = 1
-for x_var in (frq):
+acomuladorFreq = 0
+for x_var in (X):
     worksheet.write(row, col, x_var) # VARIABLE A COPIAR ( FRECUENCIA EN ESTE CASO ) COL 1
     row += 1
+    acomuladorFreq += x_var
 
 col = 1
 row = 1
@@ -125,5 +128,5 @@ workbook.close()
 
 print ('Archivo de excel creado con nombre ' + fileName + '.xlsx')
 #f = wave.openfp(wave_file_path, 'r')
-#print(f.getframerate())
+#print("frecuencia = " + str(f.getframerate()))
 #plt.show()
