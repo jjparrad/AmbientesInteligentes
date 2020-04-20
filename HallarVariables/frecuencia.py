@@ -33,24 +33,24 @@ def frequency_sepectrum(x, sf):
 
 
 # Sine sample with a frequency of 1hz and add some noise
-sr = 32  # sampling rate
-y = np.linspace(0, 2*np.pi, sr)
-y = np.tile(np.sin(y), 5)
-y += np.random.normal(0, 1, y.shape)
-t = np.arange(len(y)) / float(sr)
+# sr = 32  # sampling rate
+# y = np.linspace(0, 2*np.pi, sr)
+# y = np.tile(np.sin(y), 5)
+# y += np.random.normal(0, 1, y.shape)
+# t = np.arange(len(y)) / float(sr)
 
-plt.subplot(2, 1, 1)
-plt.plot(t, y)
-plt.xlabel('t')
-plt.ylabel('y')
+# plt.subplot(2, 1, 1)
+# plt.plot(t, y)
+# plt.xlabel('t')
+# plt.ylabel('y')
 
-frq, X = frequency_sepectrum(y, sr)
+# frq, X = frequency_sepectrum(y, sr)
 
-plt.subplot(2, 1, 2)
-plt.plot(frq, X, 'b')
-plt.xlabel('Freq (Hz)')
-plt.ylabel('|X(freq)|')
-plt.tight_layout()
+# plt.subplot(2, 1, 2)
+# plt.plot(frq, X, 'b')
+# plt.xlabel('Freq (Hz) test')
+# plt.ylabel('|X(freq)|')
+# plt.tight_layout()
 
 
 
@@ -62,7 +62,7 @@ here_path = os.path.dirname(os.path.realpath(__file__))
 wav_file_name = inputFile #Aqui toca poner el nombre del audio 
 wave_file_path = os.path.join(here_path, wav_file_name)
 sr, signal = wavfile.read(wave_file_path)
-
+print ("?? = " + str(sr))
 #SI TENEMOS MENOS DE 2 DIMENCIONES, LO CONVERTIMOS A 2 DIMENCIONES
 if signal.ndim > 1:
     # use the first channel (or take their average, alternatively)
@@ -83,7 +83,7 @@ plt.ylabel('y')
 
 # FRECUENCIA
 frq, X = frequency_sepectrum(y, sr)
-data = frq
+
 
 plt.subplot(2, 1, 2)
 plt.plot(frq, X, 'b')
@@ -105,7 +105,8 @@ worksheet.write(row, col, 'Freq');
 worksheet.write(row, col+1, 'Amplitud');
 worksheet.write(row, col+2, 'Tiempo');
 worksheet.write(row, col+3, 'Valence');
-worksheet.write(row, col+4, 'Subject');
+worksheet.write(row, col+4, 'Wavelength'); # 340 / freq (HZ)
+worksheet.write(row, col+5, 'Subject');
 
 row = 1
 acomuladorFreq = 0
@@ -114,6 +115,7 @@ for x_var in (X):
     row += 1
     acomuladorFreq += x_var
 
+print (str(acomuladorFreq / sr))
 col = 1
 row = 1
 for amplitud in (y):
@@ -129,4 +131,4 @@ workbook.close()
 print ('Archivo de excel creado con nombre ' + fileName + '.xlsx')
 #f = wave.openfp(wave_file_path, 'r')
 #print("frecuencia = " + str(f.getframerate()))
-#plt.show()
+plt.show()
