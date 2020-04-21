@@ -7,6 +7,8 @@ from scipy.io import wavfile
 import xlsxwriter
 from pyAudioAnalysis import audioTrainTest as aT
 
+
+
 # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
 # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
 # 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
@@ -57,6 +59,7 @@ def datos_significantes(x, y, tol):
 xfr, yma = fft_plot(samples, 8000)
 data = datos_significantes(xfr, yma, TOLERANCIA)
 media = np.mean(data)
+
 
 # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
 valorValencia, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
