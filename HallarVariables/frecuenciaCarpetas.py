@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from librosa import display
 from scipy.fft import fft
-from scipy.io import wavfile
 import xlsxwriter
 from pyAudioAnalysis import audioTrainTest as aT
 import os 
@@ -132,8 +131,8 @@ while i < len(files):
 
     # copiamos el tiempo en la col 3
     col = 3
-    Fs, x = wavfile.read(filepath)
-    worksheet.write(row, col, len(x)/Fs)
+    tiempo = lb.get_duration(filename=filepath )
+    worksheet.write(row, col, tiempo)
 
     # copiamos la valencia en la col 2
     col = 4
