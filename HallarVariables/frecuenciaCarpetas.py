@@ -23,6 +23,7 @@ def fft_plot(audio, sr):
     plt.grid()
     plt.xlabel("Frecuencia")
     plt.ylabel("Magnitud")
+    plt.close()
     return xf, magn
 
 # tol es el porcentaje de selección 
