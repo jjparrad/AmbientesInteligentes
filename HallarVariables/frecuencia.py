@@ -32,28 +32,6 @@ def frequency_sepectrum(x, sf):
     return frqarr, abs(x)
 
 
-# Sine sample with a frequency of 1hz and add some noise
-# sr = 32  # sampling rate
-# y = np.linspace(0, 2*np.pi, sr)
-# y = np.tile(np.sin(y), 5)
-# y += np.random.normal(0, 1, y.shape)
-# t = np.arange(len(y)) / float(sr)
-
-# plt.subplot(2, 1, 1)
-# plt.plot(t, y)
-# plt.xlabel('t')
-# plt.ylabel('y')
-
-# frq, X = frequency_sepectrum(y, sr)
-
-# plt.subplot(2, 1, 2)
-# plt.plot(frq, X, 'b')
-# plt.xlabel('Freq (Hz) test')
-# plt.ylabel('|X(freq)|')
-# plt.tight_layout()
-
-
-
 #El audio debe estar en la misma carpeta del codigo
 inputFile =  str(sys.argv[1])
 print ('Trabajando con archivo ' + inputFile)
@@ -129,6 +107,4 @@ worksheet.write(row, col, len(x)/Fs)
 workbook.close()
 
 print ('Archivo de excel creado con nombre ' + fileName + '.xlsx')
-#f = wave.openfp(wave_file_path, 'r')
-#print("frecuencia = " + str(f.getframerate()))
-plt.show()
+#plt.show()
