@@ -8,30 +8,6 @@ import xlsxwriter
 from pyAudioAnalysis import audioTrainTest as aT
 
 
-
-# Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
-# Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
-# 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
-TOLERANCIA = 85
-
-# Nombre del archivo al cual se le va a sacar la frecuencia
-filepath = "00.wav"
-
-
-# Sacar las samples del mp3 o wav
-# Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
-samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
-
-
-# Mostrar amplitudes
-
-# plt.figure()
-# lb.display.waveplot(y=samples, sr=sampling_rate)
-# plt.xlabel("Tiempo en segundos")
-# plt.ylabel("Amplitud")
-# plt.show()
-
-
 # Transformador de Fourier
 def fft_plot(audio, sr):
     n = len(audio)
@@ -56,6 +32,41 @@ def datos_significantes(x, y, tol):
     return data
 
 
+# etiquetamos la emocion segun el nombre del audio
+def etiquetar_emocion(filepath):
+    if 'anger' in filepath:
+        emocion = 1
+    elif 'disgust' in filepath:
+        emocion = 2
+    elif 'fear' in filepath:
+        emocion = 3
+    elif 'happiness' in filepath:
+        emocion = 4
+    elif 'sadness' in filepath:
+        emocion = 5
+    elif 'surprise' in filepath:
+        emocion = 6
+    else: # emocion neutral
+        emocion = 0 
+
+    return emocion
+
+
+
+# Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
+# Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
+# 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
+TOLERANCIA = 85
+
+# Nombre del archivo al cual se le va a sacar la frecuencia
+filepath = "00.wav"
+
+
+# Sacar las samples del mp3 o wav
+# Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
+samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
+
+# hallamos la frecuencia
 xfr, yma = fft_plot(samples, 8000)
 data = datos_significantes(xfr, yma, TOLERANCIA)
 media = np.mean(data)
@@ -84,13 +95,18 @@ worksheet.write(row, col+5, 'Wavelength'); # 340 / freq (HZ)
 worksheet.write(row, col+6, 'Subject');
 row = 1
 
+# copiamos la emocion en la col 0
+col = 0
+emocion = etiquetar_emocion(filepath)
+worksheet.write(row, col, emocion)
+
 # copiamos la frecuencia en la col 1
 col = 1
 worksheet.write(row, col, media)
 
 # copiamos la amplitud en la col 2
 col = 2
-worksheet.write(row, col, 'xx.xx')
+worksheet.write(row, col, 0)
 
 # copiamos el tiempo en la col 3
 col = 3

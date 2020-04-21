@@ -50,8 +50,8 @@ def etiquetar_emocion(filepath):
         emocion = 5
     elif 'surprise' in filepath:
         emocion = 6
-    else:
-        emocion = 0
+    else: # emocion neutral
+        emocion = 0 
 
     return emocion
 
@@ -128,7 +128,7 @@ while i < len(files):
 
     # copiamos la amplitud en la col 2
     col = 2
-    worksheet.write(row, col, 'xx.xx')
+    worksheet.write(row, col, 0)
 
     # copiamos el tiempo en la col 3
     col = 3
