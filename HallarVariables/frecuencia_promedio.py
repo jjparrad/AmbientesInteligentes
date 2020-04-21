@@ -5,6 +5,7 @@ from librosa import display
 from scipy.fft import fft
 from scipy.io import wavfile
 import xlsxwriter
+from pyAudioAnalysis import audioTrainTest as aT
 
 # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
 # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
@@ -22,11 +23,11 @@ samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, durat
 
 # Mostrar amplitudes
 
-plt.figure()
-lb.display.waveplot(y=samples, sr=sampling_rate)
-plt.xlabel("Tiempo en segundos")
-plt.ylabel("Amplitud")
-plt.show()
+# plt.figure()
+# lb.display.waveplot(y=samples, sr=sampling_rate)
+# plt.xlabel("Tiempo en segundos")
+# plt.ylabel("Amplitud")
+# plt.show()
 
 
 # Transformador de Fourier
@@ -56,10 +57,11 @@ def datos_significantes(x, y, tol):
 xfr, yma = fft_plot(samples, 8000)
 data = datos_significantes(xfr, yma, TOLERANCIA)
 media = np.mean(data)
-print ("frecuencia = " , media)
 
+# hallamos la valencia usando el modelo de ML de svmSpeechEmotion
+valorValencia, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
 
-# nombre del archivo sin el .wav
+#nombre del archivo sin el .wav
 fileName = filepath[:-4]
 
 # creamos la tabla y la hoja de excel
@@ -91,6 +93,10 @@ worksheet.write(row, col, 'xx.xx')
 col = 3
 Fs, x = wavfile.read(filepath)
 worksheet.write(row, col, len(x)/Fs)
+
+# copiamos la valencia en la col 2
+col = 4
+worksheet.write(row, col, valorValencia[0])
 
 # copiamos el wavelength en la col 5
 col = 5
