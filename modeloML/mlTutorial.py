@@ -1,5 +1,4 @@
 import sklearn # modelos de ml
-from sklearn.datasets import load_breast_cancer #db
 from sklearn.model_selection import train_test_split #para dividir en test y train
 from sklearn.naive_bayes import GaussianNB #modelo naives bayes
 from sklearn.metrics import accuracy_score #presicion
@@ -9,7 +8,8 @@ import argparse # para leer parametros por consola
 import pickle # para guardar y importar el modelo
 
 def train_model(excel_file):
-    #loc = ("datos.xlsx") 
+
+    # abrimos excel con la db
     loc = excel_file
 
     wb = xlrd.open_workbook(loc) 
@@ -18,6 +18,7 @@ def train_model(excel_file):
     sheet.cell_value(0, 0) 
     
 
+    # 
     label_names = sheet.row_values(0,0,1)
     labels = sheet.col_values(0,1,sheet.nrows)
     feature_names = sheet.row_values(0,1,6)
