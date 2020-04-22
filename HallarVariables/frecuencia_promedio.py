@@ -50,7 +50,13 @@ def etiquetar_emocion(filepath):
 
     return emocion
 
-
+# hallar la amplitud
+def condensar_amplitud(x):
+    data = []
+    for amp in x:
+        if amp > 0:
+            data.append(amp)
+    return np.mean(data)
 
 # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
 # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
@@ -70,6 +76,8 @@ xfr, yma = fft_plot(samples, 8000)
 data = datos_significantes(xfr, yma, TOLERANCIA)
 media = np.mean(data)
 
+# hallamos la amplitud
+amplitud = condensar_amplitud(samples)
 
 # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
 valorValencia, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
@@ -108,7 +116,7 @@ worksheet.write(row, col, media)
 
 # copiamos la amplitud en la col 2
 col = 2
-worksheet.write(row, col, 0)
+worksheet.write(row, col, amplitud)
 
 # copiamos el tiempo en la col 3
 col = 3

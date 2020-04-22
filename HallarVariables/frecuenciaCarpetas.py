@@ -55,6 +55,15 @@ def etiquetar_emocion(filepath):
     return emocion
 
 
+# hallar la amplitud
+def condensar_amplitud(x):
+    data = []
+    for amp in x:
+        if amp > 0:
+            data.append(amp)
+    return np.mean(data)
+
+
 
 # guardamos todos los audios de la carpeta objetivo ( audiosEtiquetados ) en un arreglo
 files = []
@@ -106,6 +115,8 @@ while i < len(files):
     data = datos_significantes(xfr, yma, TOLERANCIA)
     media = np.mean(data)
 
+    # hallamos la amplitud
+    amplitud = condensar_amplitud(samples)
 
     # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
     valorValencia, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
@@ -127,7 +138,7 @@ while i < len(files):
 
     # copiamos la amplitud en la col 2
     col = 2
-    worksheet.write(row, col, 0)
+    worksheet.write(row, col, amplitud)
 
     # copiamos el tiempo en la col 3
     col = 3
