@@ -37,17 +37,17 @@ def datos_significantes(x, y, tol):
 
 # etiquetamos la emocion segun el nombre del audio
 def etiquetar_emocion(filepath):
-    if 'anger' in filepath:
+    if 'anger' in filepath or 'angry' in filepath:
         emocion = 1
     elif 'disgust' in filepath:
         emocion = 2
     elif 'fear' in filepath:
         emocion = 3
-    elif 'happiness' in filepath:
+    elif 'happiness' in filepath or 'happy' in filepath:
         emocion = 4
     elif 'sadness' in filepath:
         emocion = 5
-    elif 'surprise' in filepath:
+    elif 'surprise' in filepath or 'ps' in filepath:
         emocion = 6
     else: # emocion neutral
         emocion = 0 
@@ -58,7 +58,7 @@ def etiquetar_emocion(filepath):
 
 # guardamos todos los audios de la carpeta objetivo ( audiosEtiquetados ) en un arreglo
 files = []
-for dirname, dirnames, filenames in os.walk('./audiosEtiquetados'):
+for dirname, dirnames, filenames in os.walk('./audios/audiosEtiquetados'):
     # print path to all subdirectories first.
     for subdirname in dirnames:
         files.append(os.path.join(dirname, subdirname))
@@ -67,7 +67,7 @@ for dirname, dirnames, filenames in os.walk('./audiosEtiquetados'):
     for filename in filenames:
         files.append(os.path.join(dirname, filename))
 
-
+print(files[0])
 # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
 # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
 # 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado

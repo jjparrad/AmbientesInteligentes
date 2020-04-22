@@ -33,17 +33,17 @@ def datos_significantes(x, y, tol):
 
 # etiquetamos la emocion segun el nombre del audio
 def etiquetar_emocion(filepath):
-    if 'anger' in filepath:
+    if 'anger' in filepath or 'angry' in filepath:
         emocion = 1
     elif 'disgust' in filepath:
         emocion = 2
     elif 'fear' in filepath:
         emocion = 3
-    elif 'happiness' in filepath:
+    elif 'happiness' in filepath or 'happy' in filepath:
         emocion = 4
     elif 'sadness' in filepath:
         emocion = 5
-    elif 'surprise' in filepath:
+    elif 'surprise' in filepath or 'ps' in filepath:
         emocion = 6
     else: # emocion neutral
         emocion = 0 
@@ -58,7 +58,7 @@ def etiquetar_emocion(filepath):
 TOLERANCIA = 85
 
 # Nombre del archivo al cual se le va a sacar la frecuencia
-filepath = "00.wav"
+filepath = "audios/audiosEtiquetados/OAF_back_angry.wav"
 
 
 # Sacar las samples del mp3 o wav
@@ -79,6 +79,9 @@ fileName = filepath[:-4]
 
 # creamos la tabla y la hoja de excel
 print ('creando archivo en excel...')
+if len(fileName) > 25:
+    fileName = filepath[25:-4]
+
 workbook = xlsxwriter.Workbook(fileName+'.xlsx')
 worksheet = workbook.add_worksheet(fileName)
 
