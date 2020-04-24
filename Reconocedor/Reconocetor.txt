@@ -1,4 +1,0 @@
-Archivo para la creación de la estructura del repositorio.
-
-El reconocedor está encargado de detectar, según los eventos sonoros previamente 
-clasificados y el patrón de emociones, el sentimiento que se presenta en el ambiente.
