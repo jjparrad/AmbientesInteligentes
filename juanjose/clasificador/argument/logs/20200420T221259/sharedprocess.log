@@ -1,0 +1,4 @@
+[2020-04-20 22:13:02.819] [sharedprocess] [info] main {"machineId":"369b4272355f7ee10a3ba29c9b75289fd4a8a08d8499ab53f551bf552d1f66e8","windowId":2}
+[2020-04-20 22:13:02.859] [sharedprocess] [error] [File Watcher (node.js)] Error: ENOENT: no such file or directory, stat '/home/usuario/Documentos/universidad/p2/compartido/AmbientesInteligentes/HallarVariables/argument/User/snippets'
+[2020-04-20 22:13:03.011] [sharedprocess] [info] Deleted from disk ms-azuretools.vscode-docker /home/usuario/.vscode/extensions/ms-azuretools.vscode-docker-1.0.0
+[2020-04-20 22:13:42.835] [sharedprocess] [info] Starting to clean up unused language packs.
