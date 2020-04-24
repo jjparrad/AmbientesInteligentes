@@ -83,10 +83,15 @@ media = np.mean(data)
 amplitud = condensar_amplitud(samples)
 
 # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
-valorValencia, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
+arregloValenciaArousal, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
 
 #nombre del archivo sin el .wav
 fileName = filepath[:-4]
+if (len(filepath) > 31):
+    fileName = filepath[31:-4]
+
+if (len(filepath) < 31 and len(filepath) > 9):
+    fileName = filepath[10:-4]
 
 # creamos la tabla y la hoja de excel
 print ('creando archivo en excel...')
@@ -102,8 +107,10 @@ worksheet.write(row, col+1, 'Freq');
 worksheet.write(row, col+2, 'Amplitud');
 worksheet.write(row, col+3, 'Tiempo');
 worksheet.write(row, col+4, 'Valence');
-worksheet.write(row, col+5, 'Wavelength'); # 340 / freq (HZ)
-worksheet.write(row, col+6, 'Subject');
+worksheet.write(row, col+5, 'Arousal');
+worksheet.write(row, col+6, 'Gender');
+worksheet.write(row, col+7, 'Wavelength') # 340 / freq (HZ)
+worksheet.write(row, col+8, 'Subject');
 row = 1
 
 # copiamos la emocion en la col 0
@@ -124,12 +131,21 @@ col = 3
 tiempo = lb.get_duration(filename=filepath )
 worksheet.write(row, col, tiempo)
 
-# copiamos la valencia en la col 2
+# copiamos la valencia en la col 4
 col = 4
-worksheet.write(row, col, valorValencia[0])
+worksheet.write(row, col, arregloValenciaArousal[1])
 
-# copiamos el wavelength en la col 5
+# copiamos el arousal en la col 5
 col = 5
+worksheet.write(row, col, arregloValenciaArousal[0])
+
+# copiamos el genero en la col 6
+col = 6
+gender = 1 if "hombre" in filepath else 0
+worksheet.write(row, col, gender)
+
+# copiamos el wavelength en la col 7
+col = 7
 waveLenth = 340 / media
 worksheet.write(row, col, waveLenth)
 

@@ -70,7 +70,7 @@ def condensar_amplitud(x):
 
 # guardamos todos los audios de la carpeta objetivo ( audiosEtiquetados ) en un arreglo
 files = []
-for dirname, dirnames, filenames in os.walk('../jose/audios/audiosEtiquetados'):
+for dirname, dirnames, filenames in os.walk('../audios/'):
     # print path to all subdirectories first.
     for subdirname in dirnames:
         files.append(os.path.join(dirname, subdirname))
@@ -79,11 +79,11 @@ for dirname, dirnames, filenames in os.walk('../jose/audios/audiosEtiquetados'):
     for filename in filenames:
         files.append(os.path.join(dirname, filename))
 
-
+print("primer valor", files[0], " tamaño: ", len(files))
 # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
 # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
 # 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
-TOLERANCIA = 90
+TOLERANCIA = 85
 
 
 # creamos la tabla y la hoja de excel
@@ -99,8 +99,10 @@ worksheet.write(row, col+1, 'Freq');
 worksheet.write(row, col+2, 'Amplitud');
 worksheet.write(row, col+3, 'Tiempo');
 worksheet.write(row, col+4, 'Valence');
-worksheet.write(row, col+5, 'Wavelength'); # 340 / freq (HZ)
-worksheet.write(row, col+6, 'Subject');
+worksheet.write(row, col+5, 'Arousal');
+worksheet.write(row, col+6, 'Gender');
+worksheet.write(row, col+7, 'Wavelength'); # 340 / freq (HZ)
+worksheet.write(row, col+8, 'Subject');
 
 '''
 #promedios freq y amplitud
@@ -194,9 +196,9 @@ while i < len(files):
 
     # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
     try:
-        valorValencia, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
+        arregloValenciaArousal, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
     except: 
-        valorValencia = 'error'
+        arregloValenciaArousal = 'error'
         print ("el error fue en ", filepath)
 
     #nombre del archivo sin el .wav
@@ -233,15 +235,24 @@ while i < len(files):
 
     # copiamos la valencia en la col 4
     col = 4
-    worksheet.write(row, col, valorValencia[0])
+    worksheet.write(row, col, arregloValenciaArousal[1])
 
-    # copiamos el wavelength en la col 5
+    # copiamos el arousal en la col 5
     col = 5
+    worksheet.write(row, col, arregloValenciaArousal[0])
+
+    # copiamos el genero en la col 6
+    col = 6
+    gender = 1 if "hombre" in filepath else 0
+    worksheet.write(row, col, gender)
+
+    # copiamos el wavelength en la col 7
+    col = 7
     waveLenth = 340 / media
     worksheet.write(row, col, waveLenth)
 
-    # copiamos el nombre del file en la col 6
-    col = 6
+    # copiamos el nombre del file en la col 8
+    col = 8
     worksheet.write(row, col, fileName)
 
     i += 1
