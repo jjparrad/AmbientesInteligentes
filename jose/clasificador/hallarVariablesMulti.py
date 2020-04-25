@@ -26,14 +26,23 @@ def fft_plot(audio, sr):
     plt.close()
     return xf, magn
 
-# tol es el porcentaje de selección 
+# Devuelve las frecuencias menores a 280 y que se presentan más en más del percentil TOL
 def datos_significantes(x, y, tol):
     data = []
-    lim = np.percentile(y, tol)
+    x300 = []
+    y300 = []
+
     for i in range(len(y)):
-        if y[i] >= lim:
-            data.append(x[i])
+        if x[i] <= 280:
+            x300.append(x[i])
+            y300.append(y[i])
+
+    lim = np.percentile(y300, tol)
+    for i in range(len(y300)):
+        if (y300[i] >= lim):
+            data.append(x300[i])
     return data
+
 
 
 # etiquetamos la emocion segun el nombre del audio
@@ -88,7 +97,7 @@ TOLERANCIA = 85
 
 # creamos la tabla y la hoja de excel
 print ('creando archivo en excel...')
-workbook = xlsxwriter.Workbook('datos.xlsx')
+workbook = xlsxwriter.Workbook('datos1.xlsx')
 worksheet = workbook.add_worksheet('hoja0')
 
 # creamos los labels con las variables en la fila 0
@@ -186,10 +195,12 @@ while i < len(files):
     # Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
     samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
 
-    # hallamos la frecuencia
+    # hallamos la frecuencia con el Cuartil 1 y Cuartil 3
     xfr, yma = fft_plot(samples, 8000)
     data = datos_significantes(xfr, yma, TOLERANCIA)
     media = np.mean(data)
+    #q1 = np.percentile(data, 25)
+    #q3 = np.percentile(data, 75)
 
     # hallamos la amplitud
     amplitud = condensar_amplitud(samples)

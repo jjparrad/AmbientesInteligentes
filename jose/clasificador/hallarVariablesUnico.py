@@ -20,15 +20,24 @@ def fft_plot(audio, sr):
     plt.grid()
     plt.xlabel("Frecuencia")
     plt.ylabel("Magnitud")
+    plt.show()
     return xf, magn
 
-# tol es el porcentaje de selección 
+# Devuelve las frecuencias menores a 280 y que se presentan más en más del percentil TOL
 def datos_significantes(x, y, tol):
     data = []
-    lim = np.percentile(y, tol)
+    x300 = []
+    y300 = []
+
     for i in range(len(y)):
-        if y[i] >= lim:
-            data.append(x[i])
+        if x[i] <= 280:
+            x300.append(x[i])
+            y300.append(y[i])
+
+    lim = np.percentile(y300, tol)
+    for i in range(len(y300)):
+        if (y300[i] >= lim):
+            data.append(x300[i])
     return data
 
 

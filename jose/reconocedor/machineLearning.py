@@ -33,7 +33,7 @@ def train_model(excel_file):
     train, test, train_labels, test_labels = train_test_split(features, labels, test_size = 0.33, random_state = 42)
 
     # inicializamos el clasificador ( modelo de ML, Random Forest)
-    rf = RandomForestClassifier(n_estimators = 100, random_state = 42)
+    rf = RandomForestClassifier(n_estimators = 1000, random_state = 42)
 
     # entrenamos el clasificador
     print("entrenando modelo...")
