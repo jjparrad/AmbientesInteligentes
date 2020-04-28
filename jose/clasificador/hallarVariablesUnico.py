@@ -20,7 +20,7 @@ def fft_plot(audio, sr):
     plt.grid()
     plt.xlabel("Frecuencia")
     plt.ylabel("Magnitud")
-    plt.show()
+    #plt.show()
     return xf, magn
 
 # Devuelve las frecuencias menores a 280 y que se presentan más en más del percentil TOL
@@ -70,95 +70,112 @@ def condensar_amplitud(x):
             data.append(amp)
     return np.mean(data)
 
-# Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
-# Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
-# 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
-TOLERANCIA = 85
-
-# Nombre del archivo al cual se le va a sacar la frecuencia
-filepath = str(sys.argv[1])
 
 
-# Sacar las samples del mp3 o wav
-# Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
-samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
 
-# hallamos la frecuencia
-xfr, yma = fft_plot(samples, 8000)
-data = datos_significantes(xfr, yma, TOLERANCIA)
-media = np.mean(data)
+def hallarVariables(file):
+    filepath = file
+    # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
+    # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
+    # 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
+    TOLERANCIA = 85
 
-# hallamos la amplitud
-amplitud = condensar_amplitud(samples)
+    # Sacar las samples del mp3 o wav
+    # Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
+    samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
 
-# hallamos la valencia usando el modelo de ML de svmSpeechEmotion
-arregloValenciaArousal, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
+    # hallamos la frecuencia
+    xfr, yma = fft_plot(samples, 8000)
+    data = datos_significantes(xfr, yma, TOLERANCIA)
+    media = np.mean(data)
+    mediana = np.median(data)
 
-#nombre del archivo sin el .wav
-fileName = filepath[:-4]
-if (len(filepath) > 31):
-    fileName = filepath[31:-4]
+    # hallamos la amplitud
+    amplitud = condensar_amplitud(samples)
 
-if (len(filepath) < 31 and len(filepath) > 9):
-    fileName = filepath[10:-4]
+    # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
+    arregloValenciaArousal, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
 
-# creamos la tabla y la hoja de excel
-print ('creando archivo en excel...')
+    #nombre del archivo sin el .wav
+    fileName = filepath[:-4]
+    if (len(filepath) > 31):
+        fileName = filepath[31:-4]
 
-workbook = xlsxwriter.Workbook(fileName+'.xlsx')
-worksheet = workbook.add_worksheet(fileName)
+    if (len(filepath) < 31 and len(filepath) > 9):
+        fileName = filepath[10:-4]
 
-# creamos los labels con las variables en la fila 0
-row = 0
-col = 0
-worksheet.write(row, col, 'Emocion');
-worksheet.write(row, col+1, 'Freq');
-worksheet.write(row, col+2, 'Amplitud');
-worksheet.write(row, col+3, 'Tiempo');
-worksheet.write(row, col+4, 'Valence');
-worksheet.write(row, col+5, 'Arousal');
-worksheet.write(row, col+6, 'Gender');
-worksheet.write(row, col+7, 'Wavelength') # 340 / freq (HZ)
-worksheet.write(row, col+8, 'Subject');
-row = 1
+    # creamos la tabla y la hoja de excel
+    print ('creando archivo en excel...')
 
-# copiamos la emocion en la col 0
-col = 0
-emocion = etiquetar_emocion(filepath)
-worksheet.write(row, col, emocion)
+    workbook = xlsxwriter.Workbook(fileName+'.xlsx')
+    worksheet = workbook.add_worksheet(fileName)
 
-# copiamos la frecuencia en la col 1
-col = 1
-worksheet.write(row, col, media)
+    # creamos los labels con las variables en la fila 0
+    row = 0
+    col = 0
+    worksheet.write(row, col, 'Emocion');
+    worksheet.write(row, col+1, 'Freq');
+    worksheet.write(row, col+2, 'Amplitud');
+    worksheet.write(row, col+3, 'Tiempo');
+    worksheet.write(row, col+4, 'Valence');
+    worksheet.write(row, col+5, 'Arousal');
+    worksheet.write(row, col+6, 'Gender');
+    worksheet.write(row, col+7, 'median');
+    worksheet.write(row, col+8, 'Subject');
+    row = 1
 
-# copiamos la amplitud en la col 2
-col = 2
-worksheet.write(row, col, amplitud)
+    # copiamos la emocion en la col 0
+    col = 0
+    emocion = etiquetar_emocion(filepath)
+    worksheet.write(row, col, emocion)
 
-# copiamos el tiempo en la col 3
-col = 3
-tiempo = lb.get_duration(filename=filepath )
-worksheet.write(row, col, tiempo)
+    # copiamos la frecuencia en la col 1
+    col = 1
+    worksheet.write(row, col, media)
 
-# copiamos la valencia en la col 4
-col = 4
-worksheet.write(row, col, arregloValenciaArousal[1])
+    # copiamos la amplitud en la col 2
+    col = 2
+    worksheet.write(row, col, amplitud)
 
-# copiamos el arousal en la col 5
-col = 5
-worksheet.write(row, col, arregloValenciaArousal[0])
+    # copiamos el tiempo en la col 3
+    col = 3
+    tiempo = lb.get_duration(filename=filepath )
+    worksheet.write(row, col, tiempo)
 
-# copiamos el genero en la col 6
-col = 6
-gender = 1 if "hombre" in filepath else 0
-worksheet.write(row, col, gender)
+    # copiamos la valencia en la col 4
+    col = 4
+    worksheet.write(row, col, arregloValenciaArousal[1])
 
-# copiamos el wavelength en la col 7
-col = 7
-waveLenth = 340 / media
-worksheet.write(row, col, waveLenth)
+    # copiamos el arousal en la col 5
+    col = 5
+    worksheet.write(row, col, arregloValenciaArousal[0])
 
-#cerramos la tabla de excel
-workbook.close()
+    # copiamos el genero en la col 6
+    col = 6
+    gender = 1 if "hombre" in filepath else 0
+    worksheet.write(row, col, gender)
 
-print ('Archivo de excel creado con nombre ' + fileName + '.xlsx')
+    # copiamos el wavelength en la col 7
+    #col = 7
+    #waveLenth = 340 / media
+    #worksheet.write(row, col, waveLenth)
+
+    # copiamos la mediana de la frecuencia en la col 7
+    col = 7
+    worksheet.write(row, col, mediana)
+
+    # copiamos el nombre del file en la col 8
+    col = 8
+    worksheet.write(row, col, fileName)
+
+    #cerramos la tabla de excel
+    workbook.close()
+    print ('Archivo de excel creado con nombre: ' + fileName + '.xlsx')
+    return fileName
+
+
+if __name__ == "__main__":
+    # Nombre del archivo al cual se le va a sacar la frecuencia
+    input_file = str(sys.argv[1])
+    excel_file_name = hallarVariables(input_file)
+    print ('Archivo de excel creado con nombre: ' + excel_file_name + '.xlsx')
