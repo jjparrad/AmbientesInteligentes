@@ -2,6 +2,10 @@
 
 source venv/bin/activate
 
+#instalar la dependencias del requirement.txt
+
+pip install -r requirements
+
 #Popular un excel con datos para ser entrenados
 
 python3 predecir.py -populate "carpeta con audios de entrenamiento"
