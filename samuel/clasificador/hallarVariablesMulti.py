@@ -26,7 +26,7 @@ def fft_plot(audio, sr):
     plt.close()
     return xf, magn
 
-# tol es el porcentaje de selección 
+# tol es el porcentaje de seleccion 
 def datos_significantes(x, y, tol):
     data = []
     lim = np.percentile(y, tol)
@@ -80,9 +80,9 @@ for dirname, dirnames, filenames in os.walk('../samuel/audios/audiosEtiquetados'
         files.append(os.path.join(dirname, filename))
 
 
-# Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
+# Hay algunas frecuencias que se producen mas veces o con mas fuerza que las demas
 # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
-# 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
+# 85 es un buen valor pero esto es solo algo inical luego toca experimentar con mas valores a ver cual da mejor resultado
 TOLERANCIA = 90
 
 
@@ -94,13 +94,13 @@ worksheet = workbook.add_worksheet('hoja0')
 # creamos los labels con las variables en la fila 0
 row = 0
 col = 0
-worksheet.write(row, col, 'Emocion');
-worksheet.write(row, col+1, 'Freq');
-worksheet.write(row, col+2, 'Amplitud');
-worksheet.write(row, col+3, 'Tiempo');
-worksheet.write(row, col+4, 'Valence');
-worksheet.write(row, col+5, 'Wavelength'); # 340 / freq (HZ)
-worksheet.write(row, col+6, 'Subject');
+worksheet.write(row, col, 'Emocion')
+worksheet.write(row, col+1, 'Freq')
+worksheet.write(row, col+2, 'Amplitud')
+worksheet.write(row, col+3, 'Tiempo')
+worksheet.write(row, col+4, 'Valence')
+worksheet.write(row, col+5, 'Wavelength') # 340 / freq (HZ)
+worksheet.write(row, col+6, 'Subject')
 
 '''
 #promedios freq y amplitud
@@ -181,7 +181,7 @@ while i < len(files):
     filepath = files[i]
 
     # Sacar las samples del mp3 o wav
-    # Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
+    # Las samples son amplitud en tiempo, no son importantes en si, hay que transformarlas
     samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
 
     # hallamos la frecuencia
