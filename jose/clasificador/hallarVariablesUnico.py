@@ -75,6 +75,7 @@ def condensar_amplitud(x):
 
 def hallarVariables(file):
     filepath = file
+    
     # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
     # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
     # 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
@@ -97,12 +98,14 @@ def hallarVariables(file):
     arregloValenciaArousal, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
 
     #nombre del archivo sin el .wav
+    
     fileName = filepath[:-4]
-    if (len(filepath) > 31):
-        fileName = filepath[31:-4]
-
-    if (len(filepath) < 31 and len(filepath) > 9):
-        fileName = filepath[10:-4]
+    try:
+        (fileName.rindex('/'))
+        nameStart = fileName.rindex('/') + 1
+        fileName = fileName[nameStart:]
+    except:
+        fileName = fileName
 
     # creamos la tabla y la hoja de excel
     print ('creando archivo en excel...')
@@ -178,4 +181,3 @@ if __name__ == "__main__":
     # Nombre del archivo al cual se le va a sacar la frecuencia
     input_file = str(sys.argv[1])
     excel_file_name = hallarVariables(input_file)
-    print ('Archivo de excel creado con nombre: ' + excel_file_name + '.xlsx')
