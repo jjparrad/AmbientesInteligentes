@@ -7,6 +7,7 @@ import xlsxwriter
 from pyAudioAnalysis import audioTrainTest as aT
 import os
 from statistics import mean
+from scipy import stats
 
 
 
@@ -26,14 +27,23 @@ def fft_plot(audio, sr):
     plt.close()
     return xf, magn
 
-# tol es el porcentaje de selección 
+# Devuelve las frecuencias menores a 280 y que se presentan más en más del percentil TOL
 def datos_significantes(x, y, tol):
     data = []
-    lim = np.percentile(y, tol)
+    x300 = []
+    y300 = []
+
     for i in range(len(y)):
-        if y[i] >= lim:
-            data.append(x[i])
+        if x[i] <= 280:
+            x300.append(x[i])
+            y300.append(y[i])
+
+    lim = np.percentile(y300, tol)
+    for i in range(len(y300)):
+        if (y300[i] >= lim):
+            data.append(x300[i])
     return data
+
 
 
 # etiquetamos la emocion segun el nombre del audio
@@ -67,202 +77,214 @@ def condensar_amplitud(x):
     return np.mean(data)
 
 
+def hallarVariables(folder_name):
+    # guardamos todos los audios de la carpeta objetivo ( audiosEtiquetados ) en un arreglo
+    files = []
+    for dirname, dirnames, filenames in os.walk(folder_name):
+        # print path to all subdirectories first.
+        for subdirname in dirnames:
+            files.append(os.path.join(dirname, subdirname))
 
-# guardamos todos los audios de la carpeta objetivo ( audiosEtiquetados ) en un arreglo
-files = []
-for dirname, dirnames, filenames in os.walk('../audios/audiosEtiquetados'):
-    # print path to all subdirectories first.
-    for subdirname in dirnames:
-        files.append(os.path.join(dirname, subdirname))
+        # print path to all filenames.
+        for filename in filenames:
+            files.append(os.path.join(dirname, filename))
 
-    # print path to all filenames.
-    for filename in filenames:
-        files.append(os.path.join(dirname, filename))
-
-
-# Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
-# Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
-# 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
-TOLERANCIA = 90
+    print("primer valor", files[0], " tamaño: ", len(files))
+    # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
+    # Las que se producen por encima del TOLERANCIA% de la muestra son las que se toman en cuenta para determinar la media
+    # 85 es un buen valor pero esto es solo algo inical luego toca experimentar con más valores a ver cuál da mejor resultado
+    TOLERANCIA = 85
 
 
-# creamos la tabla y la hoja de excel
-print ('creando archivo en excel...')
-workbook = xlsxwriter.Workbook('datos.xlsx')
-worksheet = workbook.add_worksheet('hoja0')
+    # creamos la tabla y la hoja de excel
+    print ('creando archivo en excel...')
+    workbook = xlsxwriter.Workbook('datos.xlsx')
+    worksheet = workbook.add_worksheet('hoja0')
 
-# creamos los labels con las variables en la fila 0
-row = 0
-col = 0
-worksheet.write(row, col, 'Emocion');
-worksheet.write(row, col+1, 'Freq');
-worksheet.write(row, col+2, 'Amplitud');
-worksheet.write(row, col+3, 'Tiempo');
-worksheet.write(row, col+4, 'Valence');
-worksheet.write(row, col+5, 'Wavelength'); # 340 / freq (HZ)
-worksheet.write(row, col+6, 'Subject');
-
-'''
-#promedios freq y amplitud
-promFrec = {
-    "0" : {
-        "prom": [],
-        "cont": 0
-    },
-    "1" : {
-        "prom": [],
-        "cont": 0
-    },
-    "2" : {
-        "prom": [],
-        "cont": 0
-    },
-    "3" : {
-        "prom": [],
-        "cont": 0
-    },
-    "4" : {
-        "prom": [],
-        "cont": 0
-    },
-    "5" : {
-        "prom": [],
-        "cont": 0
-    },
-    "6" : {
-        "prom": [],
-        "cont": 0
-    },
-    "7" : {
-        "prom": [],
-        "cont": 0
-    }
-}
-
-promAmpli = {
-    "0" : {
-        "prom": [],
-        "cont": 0
-    },
-    "1" : {
-        "prom": [],
-        "cont": 0
-    },
-    "2" : {
-        "prom": [],
-        "cont": 0
-    },
-    "3" : {
-        "prom": [],
-        "cont": 0
-    },
-    "4" : {
-        "prom": [],
-        "cont": 0
-    },
-    "5" : {
-        "prom": [],
-        "cont": 0
-    },
-    "6" : {
-        "prom": [],
-        "cont": 0
-    },
-    "7" : {
-        "prom": [],
-        "cont": 0
-    }
-}
-'''
-# iteramos por cada audio
-i = 0
-while i < len(files):
-    # Nombre del archivo al cual se le va a sacar la frecuencia
-    filepath = files[i]
-
-    # Sacar las samples del mp3 o wav
-    # Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
-    samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
-
-    # hallamos la frecuencia
-    xfr, yma = fft_plot(samples, 8000)
-    data = datos_significantes(xfr, yma, TOLERANCIA)
-    media = np.mean(data)
-
-    # hallamos la amplitud
-    amplitud = condensar_amplitud(samples)
-
-    # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
-    try:
-        valorValencia, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
-    except: 
-        valorValencia = 'error'
-        print ("el error fue en ", filepath)
-
-    #nombre del archivo sin el .wav
-    fileName = filepath[:-4]
-
-    # inicializamos el row
-    row = i + 1
-
-    # copiamos la emocion en la col 0
+    # creamos los labels con las variables en la fila 0
+    row = 0
     col = 0
-    emocion = etiquetar_emocion(filepath)
-    worksheet.write(row, col, emocion)
+    worksheet.write(row, col, 'Emocion');
+    worksheet.write(row, col+1, 'Freq');
+    worksheet.write(row, col+2, 'Amplitud');
+    worksheet.write(row, col+3, 'Tiempo');
+    worksheet.write(row, col+4, 'Valence');
+    worksheet.write(row, col+5, 'Arousal');
+    worksheet.write(row, col+6, 'Gender');
+    worksheet.write(row, col+7, 'median');
+    worksheet.write(row, col+8, 'Subject');
 
-    # copiamos la frecuencia en la col 1
-    col = 1
-    worksheet.write(row, col, media)
     '''
-    promFrec[str(emocion)]["cont"] = promFrec[str(emocion)]["cont"] + 1
-    promFrec[str(emocion)]["prom"].append(media)
+    #promedios freq y amplitud
+    promFrec = {
+        "0" : {
+            "prom": [],
+            "cont": 0
+        },
+        "1" : {
+            "prom": [],
+            "cont": 0
+        },
+        "2" : {
+            "prom": [],
+            "cont": 0
+        },
+        "3" : {
+            "prom": [],
+            "cont": 0
+        },
+        "4" : {
+            "prom": [],
+            "cont": 0
+        },
+        "5" : {
+            "prom": [],
+            "cont": 0
+        },
+        "6" : {
+            "prom": [],
+            "cont": 0
+        },
+        "7" : {
+            "prom": [],
+            "cont": 0
+        }
+    }
+
+    promAmpli = {
+        "0" : {
+            "prom": [],
+            "cont": 0
+        },
+        "1" : {
+            "prom": [],
+            "cont": 0
+        },
+        "2" : {
+            "prom": [],
+            "cont": 0
+        },
+        "3" : {
+            "prom": [],
+            "cont": 0
+        },
+        "4" : {
+            "prom": [],
+            "cont": 0
+        },
+        "5" : {
+            "prom": [],
+            "cont": 0
+        },
+        "6" : {
+            "prom": [],
+            "cont": 0
+        },
+        "7" : {
+            "prom": [],
+            "cont": 0
+        }
+    }
     '''
+    # iteramos por cada audio
+    i = 0
+    while i < len(files) - 2200:
+        # Nombre del archivo al cual se le va a sacar la frecuencia
+        filepath = files[i]
 
-    # copiamos la amplitud en la col 2
-    col = 2
-    worksheet.write(row, col, amplitud)
+        # Sacar las samples del mp3 o wav
+        # Las samples son amplitud en tiempo, no son importantes en sí, hay que transformarlas
+        samples, sampling_rate = lb.load(filepath, sr=8000, mono=True, offset=0.0, duration=None)
+
+        # hallamos la frecuencia con el Cuartil 1 y Cuartil 3
+        xfr, yma = fft_plot(samples, 8000)
+        data = datos_significantes(xfr, yma, TOLERANCIA)
+        media = np.mean(data)
+        mediana = np.median(data)
+
+        # hallamos la amplitud
+        amplitud = condensar_amplitud(samples)
+
+        # hallamos la valencia usando el modelo de ML de svmSpeechEmotion
+        try:
+            arregloValenciaArousal, nombreVariable = aT.file_regression(filepath, "data/models/svmSpeechEmotion", "svm")
+        except: 
+            arregloValenciaArousal = 'error'
+            print ("el error fue en ", filepath)
+
+        #nombre del archivo sin el .wav
+        fileName = filepath[:-4]
+
+        # inicializamos el row
+        row = i + 1
+
+        # copiamos la emocion en la col 0
+        col = 0
+        emocion = etiquetar_emocion(filepath)
+        worksheet.write(row, col, emocion)
+
+        # copiamos la frecuencia en la col 1
+        col = 1
+        worksheet.write(row, col, media)
+        '''
+        promFrec[str(emocion)]["cont"] = promFrec[str(emocion)]["cont"] + 1
+        promFrec[str(emocion)]["prom"].append(media)
+        '''
+
+        # copiamos la amplitud en la col 2
+        col = 2
+        worksheet.write(row, col, amplitud)
+        '''
+        promAmpli[str(emocion)]["cont"] = promAmpli[str(emocion)]["cont"] + 1
+        promAmpli[str(emocion)]["prom"].append(amplitud)
+        '''
+
+        # copiamos el tiempo en la col 3
+        col = 3
+        tiempo = lb.get_duration(filename=filepath )
+        worksheet.write(row, col, tiempo)
+
+        # copiamos la valencia en la col 4
+        col = 4
+        worksheet.write(row, col, arregloValenciaArousal[1])
+
+        # copiamos el arousal en la col 5
+        col = 5
+        worksheet.write(row, col, arregloValenciaArousal[0])
+
+        # copiamos el genero en la col 6
+        col = 6
+        gender = 1 if "hombre" in filepath else 0
+        worksheet.write(row, col, gender)
+
+        # copiamos la mediana de la frecuencia en la col 7
+        col = 7
+        worksheet.write(row, col, mediana)
+
+        # copiamos el nombre del file en la col 8
+        col = 8
+        worksheet.write(row, col, fileName)
+
+        i += 1
+
+
+
+
+
+
+    #cerramos la tabla de excel
+    workbook.close()
+
+    print ('Archivo de excel creado con nombre ' + 'datos.xlsx')
     '''
-    promAmpli[str(emocion)]["cont"] = promAmpli[str(emocion)]["cont"] + 1
-    promAmpli[str(emocion)]["prom"].append(amplitud)
+    l = 1
+    while(l < len(promFrec)):
+        print(l, "promedio = ", mean(promFrec[str(l)]["prom"]))
+        l +=1
+
+    l = 1
+    while(l < len(promAmpli)):
+        print(l, "amplitud = ", mean(promAmpli[str(l)]["prom"]))
+        l += 1
     '''
-
-    # copiamos el tiempo en la col 3
-    col = 3
-    tiempo = lb.get_duration(filename=filepath )
-    worksheet.write(row, col, tiempo)
-
-    # copiamos la valencia en la col 4
-    col = 4
-    worksheet.write(row, col, valorValencia[0])
-
-    # copiamos el wavelength en la col 5
-    col = 5
-    waveLenth = 340 / media
-    worksheet.write(row, col, waveLenth)
-
-    # copiamos el nombre del file en la col 6
-    col = 6
-    worksheet.write(row, col, fileName)
-
-    i += 1
-
-
-
-
-
-
-#cerramos la tabla de excel
-workbook.close()
-
-print ('Archivo de excel creado con nombre ' + 'datos.xlsx')
-'''
-l = 1
-while(l < len(promFrec)):
-    print(l, "promedio = ", mean(promFrec[str(l)]["prom"]))
-    l +=1
-
-l = 1
-while(l < len(promAmpli)):
-    print(l, "amplitud = ", mean(promAmpli[str(l)]["prom"]))
-    l += 1
-'''
+    return True
