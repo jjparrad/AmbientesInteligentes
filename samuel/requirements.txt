@@ -1,7 +1,7 @@
 audioread==2.1.8
 cffi==1.14.0
 cycler==0.10.0
-dataclasses==0.7
+dataclasses
 decorator==4.4.2
 deprecation==2.1.0
 eyeD3==0.8.12
