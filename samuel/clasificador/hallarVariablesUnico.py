@@ -6,6 +6,12 @@ from scipy.fft import fft
 import xlsxwriter
 from pyAudioAnalysis import audioTrainTest as aT
 import sys
+import pymongo
+
+connectionStr = "mongodb+srv://admin:test@integrador-blyaj.mongodb.net/test?retryWrites=true&w=majorityCopy"
+client = pymongo.MongoClient(connectionStr)
+db = client.integradorDB
+predicciones = db.predictions
 
 
 # Transformador de Fourier
@@ -116,15 +122,15 @@ def hallarVariables(file):
     # creamos los labels con las variables en la fila 0
     row = 0
     col = 0
-    worksheet.write(row, col, 'Emocion');
-    worksheet.write(row, col+1, 'Freq');
-    worksheet.write(row, col+2, 'Amplitud');
-    worksheet.write(row, col+3, 'Tiempo');
-    worksheet.write(row, col+4, 'Valence');
-    worksheet.write(row, col+5, 'Arousal');
-    worksheet.write(row, col+6, 'Gender');
-    worksheet.write(row, col+7, 'median');
-    worksheet.write(row, col+8, 'Subject');
+    worksheet.write(row, col, 'Emocion')
+    worksheet.write(row, col+1, 'Freq')
+    worksheet.write(row, col+2, 'Amplitud')
+    worksheet.write(row, col+3, 'Tiempo')
+    worksheet.write(row, col+4, 'Valence')
+    worksheet.write(row, col+5, 'Arousal')
+    worksheet.write(row, col+6, 'Gender')
+    worksheet.write(row, col+7, 'median')
+    worksheet.write(row, col+8, 'Subject')
     row = 1
 
     # copiamos la emocion en la col 0
@@ -171,9 +177,29 @@ def hallarVariables(file):
     col = 8
     worksheet.write(row, col, fileName)
 
+
     #cerramos la tabla de excel
     workbook.close()
     print ('Archivo de excel creado con nombre: ' + fileName + '.xlsx')
+
+    #Guardamos en la base de datos:
+    prediction = {
+        "emocion": str(emocion),
+        "media": str(media),
+        "amplitud": str(amplitud),
+        "tiempo": str(tiempo),
+        "valencia": str(arregloValenciaArousal[1]),
+        "arrousal": str(arregloValenciaArousal[0]),
+        "genero": str(gender),
+        "mediana": str(mediana),
+        "fileName": str(fileName) 
+    }
+
+    try:
+        predicciones.insert_one(prediction)
+    except:
+        print("WriteConcernError: No write concern mode named 'majorityCopy' found in replica set configuration")
+        
     return fileName
 
 
