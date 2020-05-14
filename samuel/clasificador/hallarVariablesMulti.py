@@ -8,7 +8,12 @@ from pyAudioAnalysis import audioTrainTest as aT
 import os
 from statistics import mean
 from scipy import stats
+import pymongo
 
+connectionStr = "mongodb+srv://admin:test@integrador-blyaj.mongodb.net/test?retryWrites=true&w=majorityCopy"
+client = pymongo.MongoClient(connectionStr)
+db = client.integradorDB
+population = db.populations
 
 
 
@@ -266,6 +271,25 @@ def hallarVariables(folder_name):
         worksheet.write(row, col, fileName)
 
         i += 1
+        #Guardamos en la base de datos:
+        newPopulation = {
+            "emocion": str(emocion),
+            "media": str(media),
+            "amplitud": str(amplitud),
+            "tiempo": str(tiempo),
+            "valencia": str(arregloValenciaArousal[1]),
+            "arrousal": str(arregloValenciaArousal[0]),
+            "genero": str(gender),
+            "mediana": str(mediana),
+            "fileName": str(fileName) 
+        }
+
+        try:
+            population.insert_one(newPopulation)
+        except:
+            print("WriteConcernError: No write concern mode named 'majorityCopy' found in replica set configuration")
+        
+        
 
 
 
