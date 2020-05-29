@@ -1,5 +1,6 @@
-import pyaudio
-import wave
+import pyaudio # Para leer con micrófono
+import wave # Para producir wavs
+import msvcrt # Para el input de salida
 
 # Esta variable determina el número de archivos de 4segs que se van a generar
 NUM_WAVS = 3
@@ -21,7 +22,10 @@ stream = p.open(format=FORMAT,
                 frames_per_buffer=CHUNK)
 
 
-for segmento in range(0, NUM_WAVS):
+
+print("Abriendo micrófono. Oprimir cualquier tecla para salir")
+segmento = 1
+while(not msvcrt.kbhit()):
     print("Grabando segmento " + str(segmento))
 
     frames = []
@@ -30,7 +34,8 @@ for segmento in range(0, NUM_WAVS):
         data = stream.read(CHUNK)
         frames.append(data)
 
-    wf = wave.open(WAVE_OUTPUT_FILENAME + str(segmento) + '.wav', 'wb')
+    filename = WAVE_OUTPUT_FILENAME + str(segmento) + '.wav'
+    wf = wave.open(filename, 'wb')
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))
     wf.setframerate(RATE)
@@ -39,8 +44,10 @@ for segmento in range(0, NUM_WAVS):
 
     # ACÁ TOCA PONER LA PARTE DEL CÓDIGO QUE LEE WAVs
     # LO DE METER EL WAV QUE SE ACABA DE GENERAR EN EL MODELO
+    # predecir(filename)
 
     print("Segmento " + str(segmento) + " grabado correctamente")
+    segmento += 1
 
 stream.stop_stream()
 stream.close()
