@@ -1,4 +1,4 @@
-from tkinter import *
+import tkinter as tk
 
 def openMic():
     if status.get() == "stopped":
@@ -13,32 +13,32 @@ def closeMic():
         status.set("stopped")
         print("close mic")
 
-window = Tk()
-status = StringVar()
+window = tk.Tk()
+status = tk.StringVar()
 status.set("stopped")
-prediction = StringVar()
+prediction = tk.StringVar()
 prediction.set("none")
 
-li = Label(window, text="EMOTION DETECTION")
+li = tk.Label(window, text="EMOTION DETECTION")
 li.grid(row=0, column=0)
 
 
-bt = Button(window, command=openMic, text="Open microphone")
+bt = tk.Button(window, command=openMic, text="Open microphone")
 bt.grid(row=2, column=0)
 
-bt = Button(window, command=closeMic, text="Close microphone")
+bt = tk.Button(window, command=closeMic, text="Close microphone")
 bt.grid(row=2, column=1)
 
-li = Label(window, text="Current status:")
+li = tk.Label(window, text="Current status:")
 li.grid(row=3, column=0)
 
-li = Label(window, textvariable=status)
+li = tk.Label(window, textvariable=status)
 li.grid(row=3, column=1)
 
-li = Label(window, text="Predicted:")
+li = tk.Label(window, text="Predicted:")
 li.grid(row=5, column=0)
 
-li = Label(window, textvariable=prediction)
+li = tk.Label(window, textvariable=prediction)
 li.grid(row=5, column=1)
 
 
