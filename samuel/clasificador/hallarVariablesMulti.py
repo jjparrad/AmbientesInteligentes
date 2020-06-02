@@ -287,7 +287,8 @@ def hallarVariables(folder_name):
         try:
             population.insert_one(newPopulation)
         except:
-            print("WriteConcernError: No write concern mode named 'majorityCopy' found in replica set configuration")
+            #print("WriteConcernError: No write concern mode named 'majorityCopy' found in replica set configuration")
+            print("Saving data")
         
         
 
