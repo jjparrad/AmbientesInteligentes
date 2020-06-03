@@ -5,7 +5,7 @@ import tkinter as tk
 import threading
 import sys
 import predecir as predictor
-
+import random
 
 # Esta variable determina el número de archivos de 4segs que se van a generar
 NUM_WAVS = 3
@@ -68,7 +68,8 @@ def read():
         if (str(gender.get()) == 'Male'):
             genderText = 'hombre'
 
-        filename = WAVE_OUTPUT_FILENAME + genderText + str(wavfile) + '.wav'
+        rand = str(random.randint(1,10000))
+        filename = rand + WAVE_OUTPUT_FILENAME + genderText + '.wav'
         wf = wave.open(filename, 'wb')
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
