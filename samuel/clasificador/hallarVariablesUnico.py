@@ -80,6 +80,7 @@ def condensar_amplitud(x):
 
 
 def hallarVariables(file):
+
     filepath = file
     
     # Hay algunas frecuencias que se producen más veces o con más fuerza que las demás
@@ -200,8 +201,11 @@ def hallarVariables(file):
     except:
         #print("WriteConcernError: No write concern mode named 'majorityCopy' found in replica set configuration")
         print("Saving data")
-        
+
+
+    
     return fileName
+    #return ans
 
 
 if __name__ == "__main__":

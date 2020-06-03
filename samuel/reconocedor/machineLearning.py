@@ -70,7 +70,33 @@ def predecir(excel_file):
 
     # hacemos la prediccion
     result = loaded_model.predict(features)
-    print(result)
+    #print(result) #linea original
+    newResult = str(result).replace('[', '')
+    newResult = newResult.replace(']', '')
+    newResult = int(newResult.replace('.', ''))
+
+    ans = ''
+    if newResult == 1:
+        ans = 'anger'
+    elif newResult == 2:
+        ans = 'disgust'
+    elif newResult == 3:
+        ans = 'fear'
+    elif newResult == 4:
+        ans = 'happiness'
+    elif newResult == 5:
+        ans = 'sadness'
+    elif newResult == 6:
+        ans = 'surprise'
+    elif newResult == 7:
+        ans = 'neutral'
+    else:
+        ans = 'sin emocion'
+
+    #print(newResult)
+    print("La emocion detectada es: " + ans)
+    #return result
+    return ans
 
 def parse_arguments():
     parser = argparse.ArgumentParser()

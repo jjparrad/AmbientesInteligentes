@@ -9,8 +9,12 @@ if __name__ == "__main__":
     action = str(sys.argv[1])
     input_file = str(sys.argv[2])
     if (action == '-predict'):
+        #temp = []
+        #temp = clasificador.hallarVariables(input_file)
         excel_file = clasificador.hallarVariables(input_file)
+        #excel_file = temp[0]
         excel_file += '.xlsx'
+        #emocion = temp[1]
         reconocedor.predecir(excel_file)
     elif (action == '-populate'):
         input_folder = input_file
