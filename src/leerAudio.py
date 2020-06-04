@@ -69,7 +69,7 @@ def read():
             genderText = 'hombre'
 
         rand = str(random.randint(1,10000))
-        filename = rand + WAVE_OUTPUT_FILENAME + genderText + '.wav'
+        filename = rand + '-' + WAVE_OUTPUT_FILENAME + '-' + genderText + '-' + str(segmento) + '.wav'
         wf = wave.open(filename, 'wb')
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
@@ -81,7 +81,6 @@ def read():
         pred = predictor.Predit(filename)
         
         prediction.set(pred)
-        print("Segment " + str(segmento) + " successfully recorded")
         segmento += 1
         if wavfile == 1:
             wavfile = 0
@@ -89,6 +88,7 @@ def read():
             wavfile = 1
 
     print("Closing microphone")
+    print("_____________________________________")
     stream.stop_stream()
     stream.close()
     status.set("stopped")
