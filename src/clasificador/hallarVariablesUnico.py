@@ -61,6 +61,196 @@ def etiquetar_emocion(filepath):
 
     return emocion
 
+
+def findGender(filepath):
+    if '1001' in filepath: 
+        return 'Male'
+    elif '1002' in filepath:
+        return 'Female'
+    elif '1003' in filepath:
+        return 'Female'
+    elif '1004' in filepath:
+        return 'Female'
+    elif '1005' in filepath:
+        return 'Male'
+    elif '1006' in filepath:
+        return 'Female'
+    elif '1007' in filepath:
+        return 'Female'
+    elif '1008' in filepath:
+        return 'Female'
+    elif '1009' in filepath:
+        return 'Female'
+    elif '1010' in filepath:
+        return 'Female'
+    elif '1011' in filepath:
+        return 'Male'
+    elif '1012' in filepath:
+        return 'Female'
+    elif '1013' in filepath:
+        return 'Female'
+    elif '1014' in filepath:
+        return 'Male'
+    elif '1015' in filepath:
+        return 'Male'
+    elif '1016' in filepath:
+        return 'Male'
+    elif '1017' in filepath:
+        return 'Male'
+    elif '1018' in filepath:
+        return 'Female'
+    elif '1019' in filepath:
+        return 'Male'
+    elif '1020' in filepath:
+        return 'Female'
+    elif '1021' in filepath:
+        return 'Female'
+    elif '1022' in filepath:
+        return 'Male'
+    elif '1023' in filepath:
+        return 'Male'
+    elif '1024' in filepath:
+        return 'Female'
+    elif '1025' in filepath:
+        return 'Female'
+    elif '1026' in filepath:
+        return 'Male'
+    elif '1027' in filepath:
+        return 'Male'
+    elif '1028' in filepath:
+        return 'Female'
+    elif '1029' in filepath:
+        return 'Female'
+    elif '1030' in filepath:
+        return 'Female'
+    elif '1031' in filepath:
+        return 'Male'
+    elif '1032' in filepath:
+        return 'Male'
+    elif '1033' in filepath:
+        return 'Male'
+    elif '1034' in filepath:
+        return 'Male'
+    elif '1035' in filepath:
+        return 'Male'
+    elif '1036' in filepath:
+        return 'Male'
+    elif '1037' in filepath:
+        return 'Female'
+    elif '1038' in filepath:
+        return 'Male'
+    elif '1039' in filepath:
+        return 'Male'
+    elif '1040' in filepath:
+        return 'Male'
+    elif '1041' in filepath:
+        return 'Male'
+    elif '1042' in filepath:
+        return 'Male'
+    elif '1043' in filepath:
+        return 'Female'
+    elif '1044' in filepath:
+        return 'Male'
+    elif '1045' in filepath:
+        return 'Male'
+    elif '1046' in filepath:
+        return 'Female'
+    elif '1047' in filepath:
+        return 'Female'
+    elif '1048' in filepath:
+        return 'Male'
+    elif '1049' in filepath:
+        return 'Female'
+    elif '1050' in filepath:
+        return 'Male'
+    elif '1051' in filepath:
+        return 'Male'
+    elif '1052' in filepath:
+        return 'Female'
+    elif '1053' in filepath:
+        return 'Female'
+    elif '1054' in filepath:
+        return 'Female'
+    elif '1055' in filepath:
+        return 'Female'
+    elif '1056' in filepath:
+        return 'Female'
+    elif '1057' in filepath:
+        return 'Male'
+    elif '1058' in filepath:
+        return 'Female'
+    elif '1059' in filepath:
+        return 'Male'
+    elif '1060' in filepath:
+        return 'Female'
+    elif '1061' in filepath:
+        return 'Female'
+    elif '1062' in filepath:
+        return 'Male'
+    elif '1063' in filepath:
+        return 'Female'
+    elif '1064' in filepath:
+        return 'Male'
+    elif '1065' in filepath:
+        return 'Male'
+    elif '1066' in filepath:
+        return 'Male'
+    elif '1067' in filepath:
+        return 'Male'
+    elif '1068' in filepath:
+        return 'Male'
+    elif '1069' in filepath:
+        return 'Male'
+    elif '1070' in filepath:
+        return 'Male'
+    elif '1071' in filepath:
+        return 'Male'
+    elif '1072' in filepath:
+        return 'Female'
+    elif '1073' in filepath:
+        return 'Female'
+    elif '1074' in filepath:
+        return 'Female'
+    elif '1075' in filepath:
+        return 'Female'
+    elif '1076' in filepath:
+        return 'Female'
+    elif '1077' in filepath:
+        return 'Male'
+    elif '1078' in filepath:
+        return 'Female'
+    elif '1079' in filepath:
+        return 'Female'
+    elif '1080' in filepath:
+        return 'Male'
+    elif '1081' in filepath:
+        return 'Male'
+    elif '1082' in filepath:
+        return 'Female'
+    elif '1083' in filepath:
+        return 'Male'
+    elif '1084' in filepath:
+        return 'Female'
+    elif '1085' in filepath:
+        return 'Male'
+    elif '1086' in filepath:
+        return 'Male'
+    elif '1087' in filepath:
+        return 'Male'
+    elif '1088' in filepath:
+        return 'Male'
+    elif '1089' in filepath:
+        return 'Female'
+    elif '1090' in filepath:
+        return 'Male'
+    elif '1091' in filepath:
+        return 'Female'
+    elif '_' in filepath:
+        return 'Female'
+    elif 'hombre' in filepath:
+        return 'Male'
+
+
 # hallar la amplitud
 def condensar_amplitud(x):
     data = []
@@ -155,7 +345,8 @@ def hallarVariables(file):
 
     # copiamos el genero en la col 6
     col = 6
-    gender = 1 if "hombre" in filepath else 0
+    checkGender = findGender(filepath)
+    gender = 1 if "Male" in checkGender else 0
     worksheet.write(row, col, gender)
 
     # copiamos el wavelength en la col 7

@@ -2,6 +2,8 @@ import sklearn # modelos de ml
 from sklearn.model_selection import train_test_split #para dividir en test y train
 from sklearn.ensemble import RandomForestClassifier #modelo Random Forest
 from sklearn.metrics import accuracy_score #presicion
+from sklearn.metrics import confusion_matrix #matriz confusion
+from sklearn.metrics import f1_score #f1 score
 import xlsxwriter # para copiar en excel
 import xlrd # para leer en excel
 import argparse # para leer parametros por consola
@@ -33,7 +35,7 @@ def train_model(excel_file):
     train, test, train_labels, test_labels = train_test_split(features, labels, test_size = 0.33, random_state = 42)
 
     # inicializamos el clasificador ( modelo de ML, Random Forest)
-    rf = RandomForestClassifier(n_estimators = 1000, random_state = 42)
+    rf = RandomForestClassifier(n_estimators = 500, random_state = 42)
 
     # entrenamos el clasificador
     print("Training Model...")
@@ -49,7 +51,13 @@ def train_model(excel_file):
     preds_randomF = rf.predict(test)
 
     # Evaluamos la precision comparando el test con las predicciones sacadas.
-    print("Random Forest precision = ", accuracy_score(test_labels, preds_randomF))
+    print("precision = ", accuracy_score(test_labels, preds_randomF))
+    print("F1_score = ", f1_score(test_labels, preds_randomF, average='macro'))
+
+    # Matriz de confusion, el 7 son las posibles opciones que tenewmos, 7 emociones.
+    print("Matriz de confusion:")
+    print(confusion_matrix(test_labels, preds_randomF, labels=range(6)))
+   
 
 
 def predecir(excel_file):
@@ -63,14 +71,19 @@ def predecir(excel_file):
     i = 1
     features = []
     features.append(sheet.row_values(1,1,8))
-    print("predeciremos los valores de: ", features)
+    print("Frequency: ", features[0][0])
+    print("Amplitude: ", features[0][1])
+    print("Time: ", features[0][2])
+    print("Valence: ", features[0][3])
+    print("Arrousal: ", features[0][4])
+    print("Gender: ", features[0][5])
+    print("Frequency median: ", features[0][6])
     # cargamos el modelo
     filename = 'modelo_emociones_eafit.sav'
     loaded_model = pickle.load(open(filename, 'rb'))
 
     # hacemos la prediccion
     result = loaded_model.predict(features)
-    print(result)
     #print(result) #linea original
     newResult = str(result).replace('[', '')
     newResult = newResult.replace(']', '')
